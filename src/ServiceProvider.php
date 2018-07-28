@@ -2,87 +2,42 @@
 
 namespace Maknz\Slack\Laravel;
 
-use RuntimeException;
+use Maknz\Slack\Client as Client;
+use GuzzleHttp\Client as Guzzle;
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
-{
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
+class ServiceProvider extends \Illuminate\Support\ServiceProvider{
+	/**
+	 * Bootstrap the application events.
+	 *
+	 * @return void
+	 */
+	public function boot(){
+		$this->publishes([__DIR__ . '/../config.php' => config_path('slack.php')], 'config');
+		$this->mergeConfigFrom(__DIR__ . '/../config.php', 'slack');
+	}
 
-    /**
-     * The actual provider.
-     *
-     * @var \Illuminate\Support\ServiceProvider
-     */
-    protected $provider;
+	/**
+	 * Register the service provider.
+	 *
+	 * @return void
+	 */
+	public function register(){
 
-    /**
-     * Instantiate the service provider.
-     *
-     * @param mixed $app
-     * @return void
-     */
-    public function __construct($app)
-    {
-        parent::__construct($app);
-
-        $this->provider = $this->getProvider();
-    }
-
-    /**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        return $this->provider->boot();
-    }
-
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        return $this->provider->register();
-    }
-
-    /**
-     * Return the service provider for the particular Laravel version.
-     *
-     * @return mixed
-     */
-    private function getProvider()
-    {
-        $app = $this->app;
-
-        $version = intval($app::VERSION);
-
-        switch ($version) {
-            case 4:
-              return new ServiceProviderLaravel4($app);
-
-            case 5:
-              return new ServiceProviderLaravel5($app);
-
-            default:
-              throw new RuntimeException('Your version of Laravel is not supported');
-        }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return ['maknz.slack'];
-    }
+		$this->app->singleton(Client::class, function (){
+			return new Client(
+				config('slack.endpoint'),
+				[
+					'channel'                 => config('slack.channel'),
+					'username'                => config('slack.username'),
+					'icon'                    => config('slack.icon'),
+					'link_names'              => config('slack.link_names'),
+					'unfurl_links'            => config('slack.unfurl_links'),
+					'unfurl_media'            => config('slack.unfurl_media'),
+					'allow_markdown'          => config('slack.allow_markdown'),
+					'markdown_in_attachments' => config('slack.markdown_in_attachments'),
+				],
+				new Guzzle
+			);
+		});
+	}
 }
