@@ -4,8 +4,9 @@ namespace Maknz\Slack\Laravel;
 
 use Maknz\Slack\Client as Client;
 use GuzzleHttp\Client as Guzzle;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider{
+class ServiceProvider extends BaseServiceProvider{
 	/**
 	 * Bootstrap the application events.
 	 *
