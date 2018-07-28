@@ -2,9 +2,8 @@
 
 namespace Maknz\Slack\Laravel;
 
-use Maknz\Slack\Client as Client;
-use GuzzleHttp\Client as Guzzle;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Maknz\Slack\Client;
 
 class ServiceProvider extends BaseServiceProvider{
 	/**
@@ -24,21 +23,9 @@ class ServiceProvider extends BaseServiceProvider{
 	 */
 	public function register(){
 
-		$this->app->singleton(Client::class, function (){
-			return new Client(
-				config('slack.endpoint'),
-				[
-					'channel'                 => config('slack.channel'),
-					'username'                => config('slack.username'),
-					'icon'                    => config('slack.icon'),
-					'link_names'              => config('slack.link_names'),
-					'unfurl_links'            => config('slack.unfurl_links'),
-					'unfurl_media'            => config('slack.unfurl_media'),
-					'allow_markdown'          => config('slack.allow_markdown'),
-					'markdown_in_attachments' => config('slack.markdown_in_attachments'),
-				],
-				new Guzzle
-			);
+		$this->app->singleton('SlackAccount', function($app){
+			return new Client(env('SLACK_HOOK_URL'), config('slack'));
 		});
+
 	}
 }
