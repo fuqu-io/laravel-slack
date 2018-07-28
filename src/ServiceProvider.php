@@ -13,8 +13,8 @@ class ServiceProvider extends BaseServiceProvider{
 	 * @return void
 	 */
 	public function boot(){
-		$this->publishes([__DIR__ . '/../config.php' => config_path('slack.php')], 'config');
-		$this->mergeConfigFrom(__DIR__ . '/../config.php', 'slack');
+		$this->publishes([__DIR__ . '/../config/main.php' => config_path('slack.php')], 'config');
+		$this->mergeConfigFrom(__DIR__ . '/../config/main.php', 'slack');
 	}
 
 	/**
