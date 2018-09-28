@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "maknz/slack": "^1.7.1"
+        "maknz/slack": "^0.3.01"
     },
     "autoload": {
         "psr-4": {
